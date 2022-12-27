@@ -51,6 +51,7 @@ async def chat_me(ctx: interactions.CommandContext, text: str):
     """talk something with open ai"""
     # use async? but completion does not have acreate method
     # or use from asgiref.sync import sync_to_async? [link](https://github.com/openai/openai-python/issues/98)
+    print(f"q: {text}")
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=text,
@@ -59,10 +60,11 @@ async def chat_me(ctx: interactions.CommandContext, text: str):
 #        frequency_penalty=0,
 #        presence_penalty=0
     )
-    print(response)
+#    print(response)
     reply_text = ""
     if hasattr(response, 'choices') and len(response.choices) > 0:
         reply_text = response.choices[0].text
+        print(f"a: {reply_text}")
     else:
         reply_text = "I can't understand what you say..."
     await ctx.send(f"{reply_text}")
