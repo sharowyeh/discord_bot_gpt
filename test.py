@@ -43,30 +43,60 @@ async def say_hello(ctx: interactions.CommandContext):
 @interactions.option()
 async def echo_me(ctx: interactions.CommandContext, text: str):
     """let bot echo your input"""
-    await ctx.send(f"reply: '{text}'")
+    await ctx.send(f"reply: '{text}' bot latency: '{round(bot.latency)} ms'")
 
 @bot.command()
 @interactions.option()
 async def chat_me(ctx: interactions.CommandContext, text: str):
     """talk something with open ai"""
-    # use async? but completion does not have acreate method
+    # reply message first for context prevent task terminated before openai response(I guess?)
+    await ctx.send(f"you ask '{text}'")
+
+    # let openai API call by async? but completion does not have acreate method
     # or use from asgiref.sync import sync_to_async? [link](https://github.com/openai/openai-python/issues/98)
     print(f"q: {text}")
-    response = openai.Completion.create(
+    token_length = 100
+    resp = openai.Completion.create(
         engine="text-davinci-003",
         prompt=text,
         temperature=0.7,
-        max_tokens=256,
+        max_tokens=token_length,
 #        frequency_penalty=0,
 #        presence_penalty=0
+#        stream=False,
+#        stop="\n",
     )
-#    print(response)
     reply_text = ""
-    if hasattr(response, 'choices') and len(response.choices) > 0:
-        reply_text = response.choices[0].text
+    while True:
+        print(resp)
+        if not hasattr(resp, 'choices') or len(resp.choices) == 0:
+            await ctx.send("I got no response")
+            break
+        if not resp.choices[0].text:
+            await ctx.send("I got empty response")
+            break
+        reply_text = resp.choices[0].text
         print(f"a: {reply_text}")
-    else:
-        reply_text = "I can't understand what you say..."
-    await ctx.send(f"{reply_text}")
+        await ctx.send(f"{reply_text}")
+        
+        if not resp.choices[0].finish_reason or resp.choices[0].finish_reason != "length":
+            print(f"Response may end")
+            break;
+
+        # append text for rest of responses(is necessary?)
+        text += reply_text
+        # increase token length
+        token_length += 100
+        resp = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=text,
+            temperature=0.7,
+            max_tokens=token_length,
+#            stream=False,
+#            stop="\n",
+        )
+
+    await ctx.send(f"hope I answered...")
+    print("we'd run")
 
 bot.start()
