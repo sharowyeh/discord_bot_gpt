@@ -50,7 +50,7 @@ async def echo_me(ctx: interactions.CommandContext, text: str):
 async def chat_me(ctx: interactions.CommandContext, text: str):
     """talk something with open ai"""
     # reply message first for context prevent task terminated before openai response(I guess?)
-    await ctx.send(f"you ask '{text}'")
+    await ctx.send(f"said '{text}'")
 
     # let openai API call by async? but completion does not have acreate method
     # or use from asgiref.sync import sync_to_async? [link](https://github.com/openai/openai-python/issues/98)
@@ -59,7 +59,7 @@ async def chat_me(ctx: interactions.CommandContext, text: str):
     resp = openai.Completion.create(
         engine="text-davinci-003",
         prompt=text,
-        temperature=0.7,
+        temperature=0.5,
         max_tokens=token_length,
 #        frequency_penalty=0,
 #        presence_penalty=0
@@ -90,13 +90,13 @@ async def chat_me(ctx: interactions.CommandContext, text: str):
         resp = openai.Completion.create(
             engine="text-davinci-003",
             prompt=text,
-            temperature=0.7,
+            temperature=0.5,
             max_tokens=token_length,
 #            stream=False,
 #            stop="\n",
         )
 
     await ctx.send(f"hope I answered...")
-    print("we'd run")
+    print("==== end of resp ====")
 
 bot.start()
