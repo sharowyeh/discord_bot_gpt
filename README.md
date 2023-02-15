@@ -1,12 +1,21 @@
-try to use this https://github.com/interactions-py/interactions.py
-for discord command dispatch
+NOTE: not sure is interactions-py or rpi issue, 
+      the discord interactions usually freeze without response in period of time.
+      try to use py-cord package to keeps my bot alive
 
-try to use python3.7 (3.7.9) from my dev nb
- - want to deploy to my raspberry pi which using python3.7.2
- - the same as python3.6, always install discord.py 0.16.x
+So far(2023/2/14) py-cord is recommended
 
-try to use python3.10...
- - install the latest version of discord-py-interactions without discord.py dependency
+- [py-cord](https://github.com/Pycord-Development/pycord/blob/master/examples/edits.py)
+  - seems compatible with discord.py 2.x version
+  - ease of using slash_command to display bot commands description on discord client apps
+
+- [interactions-py](https://github.com/interactions-py/interactions.py) for discord command dispatch
+  - this package has python version dependency
+  - python3.7(3.7.9 from my dev nb) or 3.6:
+    - will always install discord.py obsoleted version 0.16.x
+  - python3.10:
+    - install the latest version of discord-py-interactions without discord.py dependency
+  - python3.8:
+    - not sure because been changed to use py-cord
 
 
 # settings in discord #
@@ -27,30 +36,56 @@ fill-out app information and setup auth (can in-app auth)
  - leave guild id unset let bot interaction where invited in(seems that)
 refer to https://interactionspy.readthedocs.io/en/latest/quickstart.html
 
+export to env `DISCORD_BOT_TOKEN` for python packages
+export to env `DEFAULT_GUILD_ID` if specific(its fine to leave unset)
 
-# params for discord-py-interactions #
+# py-cord #
 
-get bot token from developer site bot page(can only renew for display)
-export to env `DISCORD_BOT_TOKEN`
-- [option] export guild id to `DEFAULT_GUILD_ID` or just leave unset
-coding.. just following discord-py-interactions [quickstart](https://interactionspy.readthedocs.io/en/latest/quickstart.html)
+can be used mixed with offical discord.py, and 
+
+slash_command helps bot command description automatically show up on client apps
+- for message editing, refer to [example](https://github.com/Pycord-Development/pycord/blob/master/examples/edits.py)
+
+
+# discord-py-interactions #
+
+just following discord-py-interactions [quickstart](https://interactionspy.readthedocs.io/en/latest/quickstart.html)
 
 
 # openai api #
 
-get openai api key from account page
-export to env `OPENAI_API_KEY`
-coding.. just following open ai [quickstart](https://beta.openai.com/docs/quickstart)
+get openai api key from account page, export to env `OPENAI_API_KEY`
+
+following open ai [quickstart](https://beta.openai.com/docs/quickstart)
 or just ask the chatgpt...
+
 NOTE: completion response is a object contains choices listing results within text, use resp.choices[0].text
 
-## TODO: ##
+openai completion with extended token size if got `length` from choices[0].reason,
+increase base 100
 
-if completion not finished, choices[0].reason will be `length`, need some ways to get rest of response 
-in async/await discord bot interaction 
-or likes midjounery, @ to user sending rest of messages
+rest of completions will update to original message if use test-pycord
 
-# for my rpi env #
+## TODO ##
+
+NOTE: completion may raise exception from rate limit or network error
+
+need try-catch to deal with and reponse to calling user
+
+
+# for my raspberrypi env #
+
+if using py-cord, rpi default python 3.7 works fine but better upgrade pip version to v23.0
+
+and can just install py-cord latest version independently
+
+`python3 -m venv .venv`
+`source .venv/bin/activate`
+`pip install --upgrade pip`
+`source .myenv.sh`
+
+
+## fixed python3.8 version for discord-py-interactions ##
 
 Cuz rpi OS is buster using python3.7.3, need to download python source code and rebuild it
 `wget <new version tgz from python website>`

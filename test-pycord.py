@@ -29,13 +29,13 @@ bot = commands.Bot(command_prefix='/', intents=intents)
 
 @bot.event
 async def on_ready():
-    logger.debug('bot is ready')
+    logger.debug(f'bot is ready, user:{bot.user}')
 
 @bot.event
 async def on_message(message: discord.Message):
-    logger.debug(f'on_message: {message.content}')
-    if message.content.startswith('/arguments'):
-        msg = await message.channel.send(f'Got arguments at event route:{message.content}')
+    logger.debug(f'on_message, author:{message.author} msg:{message.content}')
+#    if message.author == bot.user:
+#        logger.debug('on bot message something')
 
 @bot.slash_command(name='echo', description='Just make sure bot is still alive')
 @option('message', description='The message')
@@ -43,44 +43,43 @@ async def echo(ctx, message: str):
     logger.debug(f'echo msg:{message}')
     await ctx.respond(message)
 
-@bot.slash_command(name='arguments', description='The message with arguments')
-@option('time', description='The milliseconds')
-@option('message', description='The message')
-async def arguments(ctx, time: int=1000, message: str=''):
-    """Command with multiple arguments,
-    :param time: The milliseconds
-    :param message: The message
+@bot.slash_command(name='hello', description='Just let bot say hello world')
+@option('text', description='Additional text')
+async def hello(ctx, text: str=''):
+    logger.debug(f'{ctx.author} hello world! {text}')
+    await ctx.respond(f'{ctx.author} hello world! {text}')
+
+@bot.slash_command(name='chat', description='Talk to GPT3')
+@option('text', description='The text message')
+@option('temp', description='Completion temperature')
+async def chat(ctx, text: str, temp: float=0.5):
+    """Talk to GPT3,
+    :param text: The text message
+    :param temp: Completion temperature
     """
-    logger.debug(f'wait time:{time} msg:{message}')
-    await ctx.respond(f'Got msg:{message} and wait:{time}')
+    if temp < 0 or temp > 1 or round(temp, 1) != temp:
+        temp = 0.5
+    logger.debug(f'{ctx.author} text:{text} temp:{temp}')
 
-#TODO: try to edit message in slash command respond
-
-bot.run(os.environ.get('DISCORD_BOT_TOKEN'))
-exit()
-
-@bot.command()
-@interactions.option()
-async def chat_me(ctx: interactions.CommandContext, text: str):
-    """talk something with open ai"""
     # reply message first for context prevent task terminated before openai response(I guess?)
-    await ctx.send(f"said '{text}'")
+    reply_text = f"{ctx.author} said '{text}'"
+    msg = await ctx.respond(f"{reply_text}")
 
     # let openai API call by async? but completion does not have acreate method
     # or use from asgiref.sync import sync_to_async? [link](https://github.com/openai/openai-python/issues/98)
-    print(f"q: {text}")
     token_length = 100
+    #TODO: try catch here, you may need get exception from API rate limit!
     resp = openai.Completion.create(
         engine="text-davinci-003",
         prompt=text,
-        temperature=0.5,
+        temperature=temp,
         max_tokens=token_length,
 #        frequency_penalty=0,
 #        presence_penalty=0
 #        stream=False,
 #        stop="\n",
     )
-    reply_text = ""
+
     while True:
         print(resp)
         if not hasattr(resp, 'choices') or len(resp.choices) == 0:
@@ -89,28 +88,29 @@ async def chat_me(ctx: interactions.CommandContext, text: str):
         if not resp.choices[0].text:
             await ctx.send("I got empty response")
             break
-        reply_text = resp.choices[0].text
-        print(f"a: {reply_text}")
-        await ctx.send(f"{reply_text}")
+        print(f"choices: {resp.choices[0].text}")
+        reply_text += resp.choices[0].text
+        await msg.edit_original_response(content=f"{reply_text}")
         
         if not resp.choices[0].finish_reason or resp.choices[0].finish_reason != "length":
             print(f"Response may end")
             break;
 
         # append text for rest of responses(is necessary?)
-        text += reply_text
+        text += resp.choices[0].text
         # increase token length
         token_length += 100
         resp = openai.Completion.create(
             engine="text-davinci-003",
             prompt=text,
-            temperature=0.5,
+            temperature=temp,
             max_tokens=token_length,
 #            stream=False,
 #            stop="\n",
         )
-
-    await ctx.send(f"hope I answered...")
+    reply_text += "\n🤔"
+    await msg.edit_original_response(content=f"{reply_text}")
     print("==== end of resp ====")
 
-bot.start()
+bot.run(os.environ.get('DISCORD_BOT_TOKEN'))
+exit()
