@@ -1,3 +1,5 @@
+#NOTE: just for discord api & package practice,
+#      i think pycord is more suitable for my usage
 import os
 import interactions
 import openai
