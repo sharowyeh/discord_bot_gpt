@@ -1,3 +1,6 @@
 [submodule "twitch-bot-gpt"]
 	path = twitch_bot_gpt
 	url = https://github.com/sharowyeh/twitch-bot-gpt.git
+[submodule "twitch_bot_gpt"]
+	path = twitch_bot_gpt
+	url = https://github.com/sharowyeh/twitch-bot-gpt.git
