@@ -54,24 +54,15 @@ just following discord-py-interactions [quickstart](https://interactionspy.readt
 
 # openai api #
 
-get openai api key from account page, export to env `OPENAI_API_KEY`
+openai related api recently manipulate from another twitch bot project, refer to [README](https://github.com/sharowyeh/twitch-bot-gpt#openai-api) 
 
-following open ai [quickstart](https://beta.openai.com/docs/quickstart)
-or just ask the chatgpt...
-
-NOTE: completion response is a object contains choices listing results within text, use resp.choices[0].text
-
-openai completion with extended token size if got `length` from choices[0].reason,
-increase base 100
-
-rest of completions will update to original message if use test-pycord
-
-## TODO ##
-
-NOTE: completion may raise exception from rate limit or network error
-
-need try-catch to deal with and reponse to calling user
-
+just make submodule to use updated completion behavior
+`> git clone --recursive-submodules `
+or
+`> git submodule init`
+`> git submodule update`
+and need
+`> pip install -r twitch_bot_gpt/requirements.txt`
 
 # for my raspberrypi env #
 
