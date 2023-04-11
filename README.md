@@ -1,6 +1,8 @@
 NOTE: not sure is interactions-py or rpi issue, 
-      the discord interactions usually freeze without response in period of time.
-      try to use py-cord package to keeps my bot alive
+
+the discord interactions usually freeze without response in period of time.
+
+try to use py-cord package to keeps my bot alive
 
 So far(2023/2/14) py-cord is recommended
 
@@ -54,15 +56,21 @@ just following discord-py-interactions [quickstart](https://interactionspy.readt
 
 # openai api #
 
-openai related api recently manipulate from another twitch bot project, refer to [README](https://github.com/sharowyeh/twitch-bot-gpt#openai-api) 
+openai related api recently manipulate from another [twitch bot project](https://github.com/sharowyeh/twitch-bot-gpt#openai-api) 
 
 just make submodule to use updated completion behavior
-`> git clone --recursive-submodules `
+```
+> git clone --recursive-submodules `
+```
 or
-`> git submodule init`
-`> git submodule update`
+```
+> git submodule init
+> git submodule update
+```
 and need
-`> pip install -r twitch_bot_gpt/requirements.txt`
+```
+> pip install -r twitch_bot_gpt/requirements.txt
+```
 
 # for my raspberrypi env #
 
@@ -70,13 +78,16 @@ if using py-cord, rpi default python 3.7 works fine but better upgrade pip versi
 
 and can just install py-cord latest version independently
 
-`python3 -m venv .venv`
-`source .venv/bin/activate`
-`pip install --upgrade pip`
-`source .myenv.sh`
+```
+> python3 -m venv .venv
+> source .venv/bin/activate
+> pip install --upgrade pip
+> source .myenv.sh
+```
 
+~~## fixed python3.8 version for discord-py-interactions ##~~
 
-## fixed python3.8 version for discord-py-interactions ##
+**give up using discord interactions because im lazy to fix python version conflicts**
 
 Cuz rpi OS is buster using python3.7.3, need to download python source code and rebuild it
 `wget <new version tgz from python website>`
