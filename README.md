@@ -1,14 +1,14 @@
-NOTE: not sure is interactions-py or rpi issue, 
+NOTE: not sure is interactions-py or rpi issue, v4.3.x discord interactions usually freeze without response in period of time.
 
-the discord interactions usually freeze without response in period of time.
+20230214: change to use py-cord works fine to me.
 
-try to use py-cord package to keeps my bot alive
-
-So far(2023/2/14) py-cord is recommended
+env=> python 3.8 or later version
 
 - [py-cord](https://github.com/Pycord-Development/pycord/blob/master/examples/edits.py)
-  - seems compatible with discord.py 2.x version
+  - standalone module installation with own offical discord module dependency
   - ease of using slash_command to display bot commands description on discord client apps
+  - v2.x for option class display parameter decorators in client app
+  - python 3.8 is recommanded using py-cord v2.x and later version
 
 - [interactions-py](https://github.com/interactions-py/interactions.py) for discord command dispatch
   - this package has python version dependency
@@ -74,20 +74,7 @@ and need
 
 # for my raspberrypi env #
 
-if using py-cord, rpi default python 3.7 works fine but better upgrade pip version to v23.0
-
-and can just install py-cord latest version independently
-
-```
-> python3 -m venv .venv
-> source .venv/bin/activate
-> pip install --upgrade pip
-> source .myenv.sh
-```
-
-~~## fixed python3.8 version for discord-py-interactions ##~~
-
-**give up using discord interactions because im lazy to fix python version conflicts**
+for py-cord v2.x, using python v3.8 
 
 Cuz rpi OS is buster using python3.7.3, need to download python source code and rebuild it
 `wget <new version tgz from python website>`

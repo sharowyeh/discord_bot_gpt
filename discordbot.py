@@ -3,6 +3,7 @@ import sys
 import logging
 import asyncio
 import discord
+# py-cord must upgrade to v2.x for discord option class (python v3.8)
 from discord import option
 from discord.ext import commands
 # use gptchat from myself's twitch chat bot submodule, because
